@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividad 2 Tecnologías JavaScript y AJAX</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        fieldset {
+            border: 2px solid #cccccc;
+            border-radius: 10px;
+            background: #ffffff;
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        legend {
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"], input[type="button"] {
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        input[type="button"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="button"]:hover {
+            background-color: #0056b3;
+        }
+        .resultado {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+    </style>
+    <script>
+        function esPalindromo(cadena) {
+            const cadenaLimpia = cadena.toLowerCase().replace(/[^a-z0-9]/g, "");
+            if (cadenaLimpia === cadenaLimpia.split("").reverse().join("")) {
+                alert("La cadena es un palíndromo");
+            } else {
+                alert("La cadena NO es un palíndromo");
+            }
+        }
+
+        function esMayor(num1, num2) {
+            num1 = parseFloat(num1);
+            num2 = parseFloat(num2);
+            if (isNaN(num1) || isNaN(num2)) {
+                alert("Por favor, ingresa números válidos.");
+                return;
+            }
+            if (num1 > num2) {
+                alert("El número " + num1 + " es mayor.");
+            } else {
+                alert("El número " + num1 + " NO es mayor.");
+            }
+        }
+
+        function mostrarVocales(frase) {
+            if (!frase) {
+                alert("No ingresaste una frase.");
+                return;
+            }
+            let vocales = new Set();
+            for (let letra of frase.toLowerCase()) {
+                if ("aeiouáéíóúü".includes(letra)) {
+                    vocales.add(letra);
+                }
+            }
+            if (vocales.size > 0) {
+                alert(`Las vocales en la frase son: ${[...vocales].join(", ")}`);
+            } else {
+                alert("No se encontraron vocales en la frase.");
+            }
+        }
+
+        function contarVocales(frase) {
+            if (!frase) {
+                alert("No ingresaste una frase.");
+                return;
+            }
+            frase = frase.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            let conteoVocales = { a: 0, e: 0, i: 0, o: 0, u: 0 };
+            for (let char of frase) {
+                if (conteoVocales.hasOwnProperty(char)) {
+                    conteoVocales[char]++;
+                }
+            }
+            alert("Cantidad de vocales:\n" + JSON.stringify(conteoVocales, null, 2));
+        }
+
+        function getURL(url) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+
+    xhr.onreadystatechange = function () {
+        var mensaje = '';
+
+        // Obtener el código de estado y texto del estado
+        if (xhr.readyState === 4) {
+            var codigoEstado = xhr.status;
+            var textoEstado = xhr.statusText;
+
+            // Mostrar el código y texto de estado
+            document.getElementById('codigoEstado').innerText = `Código: ${codigoEstado}, Estado: ${textoEstado}`;
+
+            switch (codigoEstado) {
+                case 404: mensaje = 'No encontrado'; break;
+                case 200: mensaje = 'Completada'; break;
+                case 301: mensaje = 'Recurso desplazado'; break;
+                default: mensaje = `Error: ${codigoEstado}`;
+            }
+
+            document.getElementById("estadoPeticion").innerText = mensaje;
+
+            if (codigoEstado === 200) {
+                // Mostrar el contenido de la URL
+                document.getElementById('contenidoUrl').innerHTML = xhr.responseText;
+
+                // Mostrar las cabeceras HTTP de la respuesta
+                var cabeceras = xhr.getAllResponseHeaders();
+                document.getElementById('cabecerasHTTP').innerText = cabeceras;
+            } else {
+                // En caso de error en la solicitud
+                document.getElementById('contenidoUrl').innerHTML = 'Hubo un problema con la solicitud.';
+                document.getElementById('cabecerasHTTP').innerText = 'No se pudieron obtener las cabeceras.';
+            }
+        }
+    };
+
+    xhr.send();
+}
+
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Laboratorio Tecnologías JavaScript y AJAX</h1>
+        <p>Aplicación de lógica de tecnologías JS y AJAX</p>
+    </header>
+
+    <fieldset>
+        <legend>Punto 1</legend>
+        <input type="text" id="txtPalindromo" />
+        <input type="button" value="Detectar Palíndromo" onclick="esPalindromo(document.getElementById('txtPalindromo').value);" />
+    </fieldset>
+    <fieldset>
+        <legend>Punto 2</legend>
+        Número 1: <input type="text" id="txtNum1" /> Número 2: <input type="text" id="txtNum2" />
+        <input type="button" value="¿Es Mayor?" onclick="esMayor(document.getElementById('txtNum1').value, document.getElementById('txtNum2').value);" />
+    </fieldset>
+    <fieldset>
+        <legend>Punto 3</legend>
+        <input type="text" id="txtFrase" />
+        <input type="button" value="Extraer vocales" onclick="mostrarVocales(document.getElementById('txtFrase').value);" />
+    </fieldset>
+    <fieldset>
+        <legend>Punto 4</legend>
+        <input type="text" id="txtFraseContar" />
+        <input type="button" value="Contar vocales" onclick="contarVocales(document.getElementById('txtFraseContar').value);" />
+    </fieldset>
+    <fieldset>
+        <legend>Punto 5</legend>
+        <input type="text" id="urlpagina" />
+        <script>
+            document.getElementById('urlpagina').value = window.location.href;
+        </script>
+    </fieldset>
+    <fieldset>
+		<legend>Punto 6</legend>
+		<input type="text" id="url" placeholder="Ingresa la URL" />
+		<input type="button" value="Consultar URL" onclick="getURL(document.getElementById('url').value);" />
+		<div id="contenidoUrl"></div>
+	</fieldset>
+	
+	<fieldset>
+		<legend>Punto 7</legend>
+		<strong>Estado: <label id="estadoPeticion"></label></strong>
+    </fieldset>
+	
+	<fieldset>
+		<legend>Punto 8</legend>
+		<strong>Cabeceras HTTP de la respuesta del servidor:</strong>
+		<div id="cabecerasHTTP"></div>
+	</fieldset>
+	<fieldset>
+		<legend>Punto 9</legend>
+		<strong>Código de estado:</strong>
+		<div id="codigoEstado"></div>
+	</fieldset>
+	
+	
+</body>
+</html>
